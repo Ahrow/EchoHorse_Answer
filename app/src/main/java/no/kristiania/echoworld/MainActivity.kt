@@ -1,10 +1,12 @@
 package no.kristiania.echoworld
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import no.kristiania.echoworld.ui.theme.EchoWorldTheme
@@ -51,6 +54,9 @@ class MainActivity : ComponentActivity() {
     var userInput by mutableStateOf("")
     var serverAnswer by mutableStateOf("")
     var timer : Timer? = null
+    var isText by mutableStateOf(false)
+    var imageID = 1
+    var horse by mutableStateOf(resourceFromHorseID(imageID))
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +74,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -108,12 +115,30 @@ class MainActivity : ComponentActivity() {
                                     .background(color = Color.LightGray)
                                     .fillMaxWidth()
                                     .height(450.dp),
-
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = serverAnswer
-                                )
+
+                                when {
+                                    isText -> {
+                                        Text(
+                                            text = serverAnswer,
+                                            modifier = Modifier.padding(20.dp)
+                                        )
+                                    }
+                                  null != horse -> {
+                                      val horsy = if (serverAnswer == "") resourceFromHorseID(1)!! else serverAnswer.toInt()
+                                        Image(
+                                            painter = painterResource(horsy),
+                                            contentDescription = "horse image",
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(20.dp)
+                                        )
+                                    }
+                                    else -> {
+                                        // No text or image to display
+                                    }
+                                }
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -137,6 +162,8 @@ class MainActivity : ComponentActivity() {
                                         .padding(8.dp),
                                     onClick = {
                                         cancelTimer()
+                                        isText = !isText
+                                        serverAnswer = ""
                                     }
                                 ) {
                                     Text("IMG or TEXT")
@@ -148,8 +175,11 @@ class MainActivity : ComponentActivity() {
 
                                 Button(
                                     onClick = {
-                                        webSocket?.send(userInput)
+                                        val str = if (isText) userInput else horse.toString()
+                                        Log.v("idiots", "hello $str")
+                                        webSocket?.send(str)
                                         cancelTimer()
+                                        incrementHorseImage()
                                     }
                                 ) {
                                     Text("Send msg server")
@@ -162,6 +192,25 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    fun resourceFromHorseID(id: Int): Int? {
+        when (id) {
+            1 -> return R.drawable.horse01
+            2 -> return R.drawable.horse02
+            3 -> return R.drawable.horse03
+            4 -> return R.drawable.horse04
+            5 -> return R.drawable.horse05
+            6 -> return R.drawable.horse06
+            7 -> return R.drawable.horse07
+            8 -> return R.drawable.horse08
+            9 -> return R.drawable.horse09
+            10 -> return R.drawable.horse10
+            11 -> return R.drawable.horse11
+            12 -> return R.drawable.horse12
+            else -> { // Note the block
+                return null
+            }
+        }
+    }
 
     fun cancelTimer() {
         if(timer != null) {
@@ -171,25 +220,21 @@ class MainActivity : ComponentActivity() {
     }
 
     fun sendEverySeconds(data: String, interval: Long) {
-        if (timer == null) {
-            timer = Timer()
-        } else {
+        if (timer != null) {
             timer!!.cancel()
         }
+        timer = Timer()
     timer!!.scheduleAtFixedRate(timerTask {
             webSocket?.send(data)
+            incrementHorseImage()
         }, interval * 1000 ,interval * 1000)
     }
 
-//    inline fun timer(
-//        name: String? = null,
-//        daemon: Boolean = false,
-//        initialDelay: Long = 0.toLong(),
-//        period: Long,
-//        crossinline action: TimerTask.() -> Unit
-//    ): Timer {
-//
-//    }
+    fun incrementHorseImage() {
+        imageID = (imageID % 12) + 1
+        horse = resourceFromHorseID(imageID)
+    }
+
 
     fun run(url: String) {
         val request = Builder().url(url).build()
@@ -205,7 +250,7 @@ private class EchoWebSocketListener(private val activity: MainActivity) : WebSoc
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
-        output("Receiving : " + text!!)
+        output( text!!)
     }
 
     // This will be unused in this assignment, but we'll leave it here
