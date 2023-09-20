@@ -15,9 +15,5 @@ GOTCHA:
 - No app icon/logo
 - Repeat not implemented for Image, only user text
 
-SCREENSHOTS:
-
-![image](https://github.com/Ahrow/EchoHorse_Answer/assets/114227174/61e2ee24-dd2e-40b7-89c8-5361ed5b0c10)
-![image](https://github.com/Ahrow/EchoHorse_Answer/assets/114227174/e395bd7d-cbce-4f2e-b6a6-bbccdb01d5b4)
 
 
