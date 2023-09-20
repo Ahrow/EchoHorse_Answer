@@ -1,6 +1,23 @@
-EchoWorld: Answer
+EchoWorld: Horse
 -----------------
-![image](https://github.com/Ahrow/EchoWorld_Answer/assets/114227174/73008fea-2a35-4b30-b1be-8ad150143ef6)
+Most of the functionallity is there!
 
 
-notes/assignment_02_specification.md
+
+A USER CAN:
+- Toggle IMG or Text
+- Send text to server and display response in box
+- Can click send button many times to display running horse
+- Send img to server(as String) and display image in box
+- can toggle repeat, sends String to server at 1 second interval untill toggled again
+
+GOTCHA:
+- No app icon/logo
+- Repeat not implemented for Image, only user text
+
+SCREENSHOTS:
+
+![image](https://github.com/Ahrow/EchoHorse_Answer/assets/114227174/61e2ee24-dd2e-40b7-89c8-5361ed5b0c10)
+![image](https://github.com/Ahrow/EchoHorse_Answer/assets/114227174/e395bd7d-cbce-4f2e-b6a6-bbccdb01d5b4)
+
+
